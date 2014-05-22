@@ -3,4 +3,8 @@
         <file>icon-hermes.png</file>
         <file>no-picture.jpg</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>remove.png</file>
+        <file>add.png</file>
+    </qresource>
 </RCC>

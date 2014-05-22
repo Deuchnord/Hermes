@@ -177,9 +177,8 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
                <string/>
               </property>
               <property name="icon">
-               <iconset theme="list-add">
-                <normaloff/>
-               </iconset>
+               <iconset resource="resources.qrc">
+                <normaloff>:/icons/add.png</normaloff>:/icons/add.png</iconset>
               </property>
              </widget>
             </item>
@@ -195,9 +194,8 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
                <string/>
               </property>
               <property name="icon">
-               <iconset theme="list-remove">
-                <normaloff/>
-               </iconset>
+               <iconset resource="resources.qrc">
+                <normaloff>:/icons/remove.png</normaloff>:/icons/remove.png</iconset>
               </property>
              </widget>
             </item>
@@ -242,9 +240,8 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
                <string/>
               </property>
               <property name="icon">
-               <iconset theme="list-add">
-                <normaloff/>
-               </iconset>
+               <iconset resource="resources.qrc">
+                <normaloff>:/icons/add.png</normaloff>:/icons/add.png</iconset>
               </property>
              </widget>
             </item>
@@ -260,9 +257,8 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
                <string/>
               </property>
               <property name="icon">
-               <iconset theme="list-remove">
-                <normaloff/>
-               </iconset>
+               <iconset resource="resources.qrc">
+                <normaloff>:/icons/remove.png</normaloff>:/icons/remove.png</iconset>
               </property>
              </widget>
             </item>
@@ -300,7 +296,9 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

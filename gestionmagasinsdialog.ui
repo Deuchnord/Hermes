@@ -26,11 +26,15 @@
        </property>
        <item>
         <widget class="QPushButton" name="btnAjoutMagasin">
+         <property name="toolTip">
+          <string>Ajouter</string>
+         </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
-          <iconset theme="add"/>
+          <iconset resource="resources.qrc">
+           <normaloff>:/icons/add.png</normaloff>:/icons/add.png</iconset>
          </property>
         </widget>
        </item>
@@ -39,11 +43,15 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="toolTip">
+          <string>Supprimer</string>
+         </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
-          <iconset theme="remove"/>
+          <iconset resource="resources.qrc">
+           <normaloff>:/icons/remove.png</normaloff>:/icons/remove.png</iconset>
          </property>
         </widget>
        </item>
@@ -76,7 +84,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
