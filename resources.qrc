@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>icon-hermes.png</file>
+        <file>no-picture.jpg</file>
+    </qresource>
+</RCC>
