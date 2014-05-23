@@ -30,7 +30,7 @@
      <x>0</x>
      <y>0</y>
      <width>707</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -56,6 +56,9 @@
    <addaction name="menuAide"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="movable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -66,6 +69,11 @@
    <addaction name="actionSupprimerProduit"/>
    <addaction name="separator"/>
    <addaction name="actionGererMagasins"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
   </widget>
   <action name="actionNouveauProduit">
    <property name="text">

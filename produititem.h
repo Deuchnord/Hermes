@@ -32,18 +32,9 @@ class ProduitItem : public QWidget
     Q_OBJECT
 
 public:
-    explicit ProduitItem(QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image = QPixmap(":/images/no-picture.jpg"), int magasin = 0,
+    explicit ProduitItem(QWidget *parent, QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image = QPixmap(":/images/no-picture.jpg"), int magasin = 0,
                          bool enSAV = false, QHash<QString, QByteArray> factures = QHash<QString, QByteArray>(), QHash<QString, QByteArray> garanties = QHash<QString, QByteArray>());
-    explicit ProduitItem(ProduitInfo prod);
     explicit ProduitItem();
-
-    /*QVector<ProduitItem*> items;
-
-    ProduitInfo info();
-    QVector<ProduitItem> extractInfo(QVector<ProduitItem*> const& v);
-    static void save(QDataStream & out, QVector<ProduitInfo> const& v);
-    ProduitItem* create(ProduitInfo const& info);
-    QVector<ProduitItem*> load(QDataStream & in);*/
 
     // Pour la sérialisation
     ProduitInfo getProduitInfo();

@@ -48,12 +48,12 @@ MainWindow::MainWindow(QWidget *parent) :
         QList<ProduitInfo> listInfoProd;
         content >> listInfoProd;
 
-        //QMessageBox::information(this, "test", QString::number(listInfoProd.count()));
         for(ProduitInfo i : listInfoProd)
-            ajouterProduit(new ProduitItem(i.nomProduit, i.dateAchat, i.dateFinGarantie, i.image, i.indexMagasin, i.enSAV, i.factures, i.garanties));
+            ajouterProduit(new ProduitItem(this, i.nomProduit, i.dateAchat, i.dateFinGarantie, i.image, i.indexMagasin, i.enSAV, i.factures, i.garanties));
     }
 
     ui->actionSupprimerProduit->setEnabled(false);
+    ui->statusBar->hide();
 }
 
 void MainWindow::searchProduit(QString search)
@@ -82,7 +82,7 @@ void MainWindow::searchProduit(QString search)
 
 void MainWindow::on_actionNouveauProduit_triggered()
 {
-    ProduitItem *prod = new ProduitItem("Nouveau produit", QDate::currentDate(), QDate::currentDate().addYears(1));
+    ProduitItem *prod = new ProduitItem(this, "Nouveau produit", QDate::currentDate(), QDate::currentDate().addYears(1));
     prod->openDialog();
     ajouterProduit(prod);
 }
@@ -110,9 +110,11 @@ void MainWindow::on_actionGererMagasins_triggered()
 void MainWindow::ajouterProduit(ProduitItem *produit)
 {
     QListWidgetItem *widgetItem = new QListWidgetItem();
-    widgetItem->setSizeHint(produit->getImage().size());
+    widgetItem->setSizeHint(QSize(0, 128));
     ui->listeProduits->addItem(widgetItem);
     ui->listeProduits->setItemWidget(widgetItem, produit);
+
+    //ui->statusBar->showMessage(QString::number(ui->listeProduits->count())+" produits affichés.");
 }
 
 void MainWindow::on_listeProduits_currentRowChanged()

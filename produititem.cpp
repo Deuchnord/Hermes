@@ -17,9 +17,9 @@ QDataStream &operator >>(QDataStream &in, ProduitInfo &prod)
     return in;
 }
 
-ProduitItem::ProduitItem(QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image, int magasin,
+ProduitItem::ProduitItem(QWidget *parent, QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image, int magasin,
                          bool enSAV, QHash<QString, QByteArray> factures, QHash<QString, QByteArray> garanties) :
-    QWidget(),
+    QWidget(parent),
     ui(new Ui::ProduitItem)
 {
     ui->setupUi(this);
@@ -40,17 +40,9 @@ ProduitItem::ProduitItem(QString nomProduit, QDate dateAchat, QDate dateFinGaran
     ui->btnMoreInfo->setToolTip("Ouvre une fenêtre contenant toutes les informations\nsur votre "+nomProduit+".");
 }
 
-ProduitItem::ProduitItem(ProduitInfo prod) :
-    QWidget(),
-    ui(new Ui::ProduitItem)
-{
-    ProduitItem(prod.nomProduit, prod.dateAchat, prod.dateFinGarantie, prod.image, prod.indexMagasin, prod.enSAV, prod.factures, prod.garanties);
-    ui->setupUi(this);
-}
-
 void ProduitItem::on_btnMoreInfo_clicked()
 {
-    InfosProduitDialog *winInfoProd = new InfosProduitDialog(this, nomProduit, dateAchat, dateFinGarantie, image, indexMagasin, enSAV, factures, garanties);
+    InfosProduitDialog *winInfoProd = new InfosProduitDialog(this->parentWidget(), nomProduit, dateAchat, dateFinGarantie, image, indexMagasin, enSAV, factures, garanties);
     winInfoProd->setModal(true);
     winInfoProd->show();
 }
