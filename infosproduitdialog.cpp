@@ -12,8 +12,8 @@
 #include <QUrl>
 #include <QTransform>
 
-InfosProduitDialog::InfosProduitDialog(QWidget *parent, QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image, int indexMagasin, bool enSAV, QHash<QString, QByteArray> facturePDF, QHash<QString, QByteArray> garantiePDF) :
-    QDialog(parent),
+InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image, int indexMagasin, bool enSAV, QHash<QString, QByteArray> facturePDF, QHash<QString, QByteArray> garantiePDF) :
+    QDialog(mainWindow),
     ui(new Ui::InfosProduitDialog)
 {
     ui->setupUi(this);

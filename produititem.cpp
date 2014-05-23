@@ -42,7 +42,8 @@ ProduitItem::ProduitItem(QWidget *parent, QString nomProduit, QDate dateAchat, Q
 
 void ProduitItem::on_btnMoreInfo_clicked()
 {
-    InfosProduitDialog *winInfoProd = new InfosProduitDialog(this->parentWidget(), nomProduit, dateAchat, dateFinGarantie, image, indexMagasin, enSAV, factures, garanties);
+    InfosProduitDialog *winInfoProd = new InfosProduitDialog(this, this->parentWidget(), nomProduit, dateAchat, dateFinGarantie, image, indexMagasin, enSAV, factures, garanties);
+
     winInfoProd->setModal(true);
     winInfoProd->show();
 }

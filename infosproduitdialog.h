@@ -19,7 +19,7 @@ class InfosProduitDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit InfosProduitDialog(QWidget *parent, QString nomProduit = "", QDate dateAchat = QDate::currentDate(), QDate dateFinGarantie = QDate::currentDate().addYears(1), QPixmap image = QPixmap(), int indexMagasin = 0, bool enSAV = false, QHash<QString, QByteArray> facturePDF = QHash<QString, QByteArray>(), QHash<QString, QByteArray> garantiePDF = QHash<QString, QByteArray>());
+    explicit InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QString nomProduit = "", QDate dateAchat = QDate::currentDate(), QDate dateFinGarantie = QDate::currentDate().addYears(1), QPixmap image = QPixmap(), int indexMagasin = 0, bool enSAV = false, QHash<QString, QByteArray> facturePDF = QHash<QString, QByteArray>(), QHash<QString, QByteArray> garantiePDF = QHash<QString, QByteArray>());
     ~InfosProduitDialog();
 
 public slots:
