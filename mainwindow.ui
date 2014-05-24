@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
-    <height>471</height>
+    <width>765</width>
+    <height>610</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +29,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>707</width>
-     <height>21</height>
+     <width>765</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -84,9 +84,6 @@
    </property>
   </action>
   <action name="actionSupprimerProduit">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Supprimer le produit</string>
    </property>

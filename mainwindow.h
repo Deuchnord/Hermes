@@ -17,20 +17,22 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    Ui::MainWindow *getUI();
     ~MainWindow();
 
 public slots:
     void searchProduit(QString search);
     void on_actionNouveauProduit_triggered();
-    void on_actionSupprimerProduit_triggered();
+    void on_actionSupprimerProduit_triggered(bool dontAskConfirm = true);
     void on_actionGererMagasins_triggered();
-    void on_listeProduits_currentRowChanged();
     void on_actionAPropos_triggered();
     void on_actionAide_triggered();
 
+    void deleteAsked();
+
 private:
     Ui::MainWindow *ui;
-    void ajouterProduit(ProduitItem *produit);
+    QListWidgetItem *ajouterProduit(ProduitItem *produit);
     QLineEdit *searchBox;
     QString version;
 };

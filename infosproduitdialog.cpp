@@ -42,10 +42,6 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
             node = node.nextSibling();
         }
     }
-    else
-    {
-        QMessageBox::critical(this, "Erreur", "Impossible de récupérer la liste des magasins.\nLes avez-vous enregistrés ?");
-    }
 
     // Remplissage des données
     ui->txtNom->setText(nomProduit);
@@ -123,7 +119,7 @@ void InfosProduitDialog::on_listFactures_itemDoubleClicked(QListWidgetItem *item
     tempFile.open(QFile::WriteOnly);
     tempFile.write(contentFile);
     tempFile.close();
-    QDesktopServices::openUrl(QUrl(tempFile.fileName()));
+    QDesktopServices::openUrl(QUrl("file:///"+tempFile.fileName()));
 }
 
 void InfosProduitDialog::on_btnSupprFacture_clicked()
@@ -172,7 +168,7 @@ void InfosProduitDialog::on_listGaranties_itemDoubleClicked(QListWidgetItem *ite
     tempFile.open(QFile::WriteOnly);
     tempFile.write(contentFile);
     tempFile.close();
-    QDesktopServices::openUrl(QUrl(tempFile.fileName()));
+    QDesktopServices::openUrl(QUrl("file:///"+tempFile.fileName()));
 }
 
 void InfosProduitDialog::on_btnSupprGarantie_clicked()

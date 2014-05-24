@@ -4,6 +4,7 @@
 #include "aboutdialog.h"
 #include "ui_mainwindow.h"
 
+#include <QSpacerItem>
 #include <QWidget>
 #include <QListWidgetItem>
 #include <QPixmap>
@@ -18,6 +19,7 @@
 #include <QList>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QtXml/QDomDocument>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -52,7 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
             ajouterProduit(new ProduitItem(this, i.nomProduit, i.dateAchat, i.dateFinGarantie, i.image, i.indexMagasin, i.enSAV, i.factures, i.garanties));
     }
 
-    ui->actionSupprimerProduit->setEnabled(false);
+    if(ui->listeProduits->count() > 0)
+        ui->listeProduits->item(0)->setSelected(true);
+    else
+        ui->actionSupprimerProduit->setEnabled(false);
+
     ui->statusBar->hide();
 }
 
@@ -82,20 +88,73 @@ void MainWindow::searchProduit(QString search)
 
 void MainWindow::on_actionNouveauProduit_triggered()
 {
-    ProduitItem *prod = new ProduitItem(this, "Nouveau produit", QDate::currentDate(), QDate::currentDate().addYears(1));
-    prod->openDialog();
-    ajouterProduit(prod);
+    QFile fichierMagasins(QDir::homePath()+"/.deuchnord-hermes/manufacturers.xml");
+    fichierMagasins.open(QFile::ReadOnly);
+    int nbMagasins = 0;
+
+    if(fichierMagasins.isOpen())
+    {
+        QString contenuFichier = fichierMagasins.readAll();
+        fichierMagasins.close();
+
+        QDomDocument dom;
+        dom.setContent(contenuFichier);
+        QDomElement root = dom.firstChildElement();
+        QDomElement manufacturer;
+        QDomNode node = root.firstChild();
+
+        while(!node.isNull())
+        {
+            manufacturer = node.toElement();
+            if(manufacturer.tagName() == "manufacturer")
+                nbMagasins++;
+
+            node = node.nextSibling();
+        }
+    }
+
+    if(nbMagasins == 0)
+    {
+        QMessageBox::critical(this, "Erreur", "Aucun magasin ne semble avoir été enregistré.\nVeuillez les enregistrer avant d'entrer vos produits.");
+        ui->actionGererMagasins->trigger();
+    }
+    else
+    {
+        ProduitItem *prod = new ProduitItem(this, "Nouveau produit", QDate::currentDate(), QDate::currentDate().addYears(1));
+        prod->openDialog(true);
+        QListWidgetItem* item = ajouterProduit(prod);
+        item->setSelected(true);
+        connect(prod, SIGNAL(deleteAsked()), SLOT(deleteAsked()));
+        ui->actionSupprimerProduit->setEnabled(true);
+    }
 }
 
-void MainWindow::on_actionSupprimerProduit_triggered()
+void MainWindow::deleteAsked()
+{
+    on_actionSupprimerProduit_triggered(true);
+}
+
+void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
 {
     if(ui->listeProduits->selectedItems().count() == 1)
     {
         QListWidgetItem *item = ui->listeProduits->selectedItems()[0];
-        if(QMessageBox::question(this, "Supprimer le produit", "Êtes-vous sûr de vouloir supprimer ce produit ?\nCette action n'est pas réversible.", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+
+        int answer;
+        if(!dontAskConfirm)
+            answer = QMessageBox::question(this, "Supprimer le produit", "Êtes-vous sûr de vouloir supprimer ce produit ?\nCette action n'est pas réversible.", QMessageBox::Yes | QMessageBox::No);
+        else
+            answer = QMessageBox::Yes;
+
+        if(answer == QMessageBox::Yes)
         {
+            ui->listeProduits->setCurrentRow(ui->listeProduits->row(item));
             ui->listeProduits->removeItemWidget(item);
+
             delete item;
+
+            if(ui->listeProduits->count() == 0)
+                ui->actionSupprimerProduit->setEnabled(false);
         }
     }
 }
@@ -107,7 +166,7 @@ void MainWindow::on_actionGererMagasins_triggered()
     dialog->show();
 }
 
-void MainWindow::ajouterProduit(ProduitItem *produit)
+QListWidgetItem* MainWindow::ajouterProduit(ProduitItem *produit)
 {
     QListWidgetItem *widgetItem = new QListWidgetItem();
     widgetItem->setSizeHint(QSize(0, 128));
@@ -115,11 +174,8 @@ void MainWindow::ajouterProduit(ProduitItem *produit)
     ui->listeProduits->setItemWidget(widgetItem, produit);
 
     //ui->statusBar->showMessage(QString::number(ui->listeProduits->count())+" produits affichés.");
-}
 
-void MainWindow::on_listeProduits_currentRowChanged()
-{
-    ui->actionSupprimerProduit->setEnabled(true);
+    return widgetItem;
 }
 
 void MainWindow::on_actionAPropos_triggered()
@@ -132,6 +188,11 @@ void MainWindow::on_actionAPropos_triggered()
 void MainWindow::on_actionAide_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://hermes.deuchnord.tk/help/"));
+}
+
+Ui::MainWindow *MainWindow::getUI()
+{
+    return ui;
 }
 
 MainWindow::~MainWindow()

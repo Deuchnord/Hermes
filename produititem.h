@@ -53,13 +53,17 @@ public:
     void setGaranties(QHash<QString, QByteArray> garanties);
 
     void updateDescription();
-    void openDialog();
+    void openDialog(bool deleteOnCancel = false);
 
     // Destructeur
     ~ProduitItem();
 
 public slots:
-    void on_btnMoreInfo_clicked();
+    void on_btnMoreInfo_clicked(bool deleteOnCancel = false);
+    void winInfoProdCanceled();
+
+signals:
+    void deleteAsked();
 
 private:
     Ui::ProduitItem *ui;

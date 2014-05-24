@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QtXml>
 #include <QInputDialog>
+#include <QMessageBox>
 
 GestionMagasinsDialog::GestionMagasinsDialog(QWidget *parent) :
     QDialog(parent),
@@ -47,7 +48,23 @@ GestionMagasinsDialog::GestionMagasinsDialog(QWidget *parent) :
 
 void GestionMagasinsDialog::on_btnAjoutMagasin_clicked()
 {
-    ui->listMagasins->addItem(QInputDialog::getText(this, "Ajouter un magasin", "Veuillez entrer le nom du nouveau magasin :"));
+    QString nom = QInputDialog::getText(this, "Ajouter un magasin", "Veuillez entrer le nom du nouveau magasin :");
+    if(nom != "")
+    {
+        int nb = ui->listMagasins->count();
+        bool alreadyHere = false;
+        for(int i = 0; i < nb; i++)
+        {
+            QString magasin = ui->listMagasins->item(i)->text();
+            if(magasin.toLower() == nom.toLower())
+                alreadyHere = true;
+        }
+
+        if(alreadyHere)
+            QMessageBox::warning(this, "Ajout impossible", "Le magasin est déjà présent dans la liste !");
+        else
+            ui->listMagasins->addItem(nom);
+    }
 }
 
 void GestionMagasinsDialog::on_btnSupprMagasin_clicked()

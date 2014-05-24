@@ -1,5 +1,6 @@
 #include "produititem.h"
 #include "ui_produititem.h"
+#include "mainwindow.h"
 
 #include <QMessageBox>
 
@@ -40,12 +41,21 @@ ProduitItem::ProduitItem(QWidget *parent, QString nomProduit, QDate dateAchat, Q
     ui->btnMoreInfo->setToolTip("Ouvre une fenêtre contenant toutes les informations\nsur votre "+nomProduit+".");
 }
 
-void ProduitItem::on_btnMoreInfo_clicked()
+void ProduitItem::on_btnMoreInfo_clicked(bool deleteOnCancel)
 {
     InfosProduitDialog *winInfoProd = new InfosProduitDialog(this, this->parentWidget(), nomProduit, dateAchat, dateFinGarantie, image, indexMagasin, enSAV, factures, garanties);
 
     winInfoProd->setModal(true);
     winInfoProd->show();
+
+    // Si on annule et que deleteOnCancel est vrai, le signal deleteAsked() sera déclenché.
+    if(deleteOnCancel)
+        connect(winInfoProd, SIGNAL(rejected()), SLOT(winInfoProdCanceled()));
+}
+
+void ProduitItem::winInfoProdCanceled()
+{
+    emit deleteAsked();
 }
 
 // Accesseurs
@@ -135,9 +145,9 @@ void ProduitItem::updateDescription()
     ui->infosProduit->setText(descriptionListe);
 }
 
-void ProduitItem::openDialog()
+void ProduitItem::openDialog(bool deleteOnCancel)
 {
-    ui->btnMoreInfo->click();
+    on_btnMoreInfo_clicked(deleteOnCancel);
 }
 
 // Pour la sérialisation
