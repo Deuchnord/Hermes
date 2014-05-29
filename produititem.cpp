@@ -134,10 +134,15 @@ void ProduitItem::updateDescription()
     if(dateFinGarantie.month() < 10)
         moisFinGarantie = "0"+moisFinGarantie;
 
-    if(QDate::currentDate() < dateFinGarantie)
-        descriptionListe += "fin de la garantie le "+jourFinGarantie+"/"+moisFinGarantie+"/"+QString::number(dateFinGarantie.year());
+    if(dateFinGarantie != QDate(1970, 1, 1))
+    {
+        if(QDate::currentDate() < dateFinGarantie)
+            descriptionListe += "fin de la garantie le "+jourFinGarantie+"/"+moisFinGarantie+"/"+QString::number(dateFinGarantie.year());
+        else
+            descriptionListe += "garantie expirée";
+    }
     else
-        descriptionListe += "garantie expirée";
+        descriptionListe += "garantie à vie";
 
     if(this->enSAV)
         descriptionListe += "\nParti en SAV";

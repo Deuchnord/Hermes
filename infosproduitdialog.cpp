@@ -46,7 +46,15 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
     // Remplissage des données
     ui->txtNom->setText(nomProduit);
     ui->dateAchat->setDate(dateAchat);
-    ui->dateFinGarantie->setDate(dateFinGarantie);
+
+    if(dateFinGarantie != QDate(1970, 1, 1))
+        ui->dateFinGarantie->setDate(dateFinGarantie);
+    else
+    {
+        ui->dateFinGarantie->setDate(QDate::currentDate().addYears(1));
+        ui->checkGarantieAVie->setChecked(true);
+    }
+
     ui->comboMagasin->setCurrentIndex(indexMagasin);
     ui->checkSAV->setChecked(enSAV);
     ui->image->setPixmap(image);
@@ -190,7 +198,12 @@ void InfosProduitDialog::on_buttonBox_accepted()
 {
     getParentItem()->setNomProduit(ui->txtNom->text());
     getParentItem()->setDateAchat(ui->dateAchat->date());
-    getParentItem()->setDateFinGarantie(ui->dateFinGarantie->date());
+
+    if(!ui->checkGarantieAVie->isChecked())
+        getParentItem()->setDateFinGarantie(ui->dateFinGarantie->date());
+    else
+        getParentItem()->setDateFinGarantie(QDate(1970, 1, 1));
+
     getParentItem()->setImage(this->image);
     getParentItem()->setMagasin(ui->comboMagasin->currentIndex());
     getParentItem()->setEnSAV(ui->checkSAV->isChecked());
@@ -206,4 +219,12 @@ ProduitItem* InfosProduitDialog::getParentItem()
 InfosProduitDialog::~InfosProduitDialog()
 {
     delete ui;
+}
+
+void InfosProduitDialog::on_checkGarantieAVie_toggled(bool checked)
+{
+    if(checked)
+        ui->dateFinGarantie->setEnabled(false);
+    else
+        ui->dateFinGarantie->setEnabled(true);
 }

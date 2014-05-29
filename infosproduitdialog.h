@@ -39,6 +39,9 @@ public slots:
     // Boutons du bas
     void on_buttonBox_accepted();
 
+private slots:
+    void on_checkGarantieAVie_toggled(bool checked);
+
 private:
     QPixmap image;
     Ui::InfosProduitDialog *ui;

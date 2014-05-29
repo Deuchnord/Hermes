@@ -20,6 +20,9 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QtXml/QDomDocument>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,9 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    version = "0.1";
+    version = "0.2";
 
     searchBox = new QLineEdit(this);
+    searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
     searchBox->setPlaceholderText("Rechercher...");
     searchBox->setToolTip("Recherchez un produit à partir de son nom.\nLa casse n'est pas prise en compte.");
     searchBox->setClearButtonEnabled(true);
@@ -59,7 +63,35 @@ MainWindow::MainWindow(QWidget *parent) :
     else
         ui->actionSupprimerProduit->setEnabled(false);
 
-    ui->statusBar->hide();
+    // Recherche de nouvelle version :
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(dlVersionFinished(QNetworkReply*)));
+
+#ifdef Q_OS_LINUX
+    QString os = "linux";
+#endif
+#ifdef Q_OS_WIN32
+    QString os = "windows";
+#endif
+
+    manager->get(QNetworkRequest(QUrl("http://hermes.deuchnord.tk/version.php?os="+os)));
+}
+
+void MainWindow::dlVersionFinished(QNetworkReply *reply)
+{
+    QString versionAvailable = reply->readAll();
+    if(versionAvailable != "" && version != versionAvailable)
+    {
+        ui->statusBar->showMessage("Une nouvelle version ("+versionAvailable+") est disponible !");
+        QPushButton* btnUpdate = new QPushButton("Télécharger la nouvelle version");
+        connect(btnUpdate, SIGNAL(clicked()), this, SLOT(dlNewVersionBtnClicked()));
+        ui->statusBar->addPermanentWidget(btnUpdate);
+    }
+}
+
+void MainWindow::dlNewVersionBtnClicked()
+{
+    QDesktopServices::openUrl(QUrl("http://hermes.deuchnord.tk"));
 }
 
 void MainWindow::searchProduit(QString search)
@@ -84,6 +116,8 @@ void MainWindow::searchProduit(QString search)
         for(int i = 0; i < ui->listeProduits->count(); i++)
             ui->listeProduits->item(i)->setHidden(false);
     }
+
+    updateStatusMessage();
 }
 
 void MainWindow::on_actionNouveauProduit_triggered()
@@ -155,6 +189,8 @@ void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
 
             if(ui->listeProduits->count() == 0)
                 ui->actionSupprimerProduit->setEnabled(false);
+
+            updateStatusMessage();
         }
     }
 }
@@ -173,7 +209,7 @@ QListWidgetItem* MainWindow::ajouterProduit(ProduitItem *produit)
     ui->listeProduits->addItem(widgetItem);
     ui->listeProduits->setItemWidget(widgetItem, produit);
 
-    //ui->statusBar->showMessage(QString::number(ui->listeProduits->count())+" produits affichés.");
+    updateStatusMessage();
 
     return widgetItem;
 }
@@ -185,6 +221,11 @@ void MainWindow::on_actionAPropos_triggered()
     dialog->show();
 }
 
+void MainWindow::on_actionReportBug_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://sourceforge.net/p/deuchnord-hermes/bugs/"));
+}
+
 void MainWindow::on_actionAide_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://hermes.deuchnord.tk/help/"));
@@ -193,6 +234,16 @@ void MainWindow::on_actionAide_triggered()
 Ui::MainWindow *MainWindow::getUI()
 {
     return ui;
+}
+
+void MainWindow::updateStatusMessage()
+{
+    int nb = 0;
+    for(int i = 0; i < ui->listeProduits->count(); i++)
+        if(!ui->listeProduits->item(i)->isHidden())
+            nb++;
+
+    ui->statusBar->showMessage(QString::number(nb)+" produit(s) affiché(s).");
 }
 
 MainWindow::~MainWindow()

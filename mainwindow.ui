@@ -50,6 +50,7 @@
      <string>Aide</string>
     </property>
     <addaction name="actionAide"/>
+    <addaction name="actionReportBug"/>
     <addaction name="actionAPropos"/>
    </widget>
    <addaction name="menuFichier"/>
@@ -98,7 +99,7 @@
   </action>
   <action name="actionAide">
    <property name="text">
-    <string>Centre d'aide</string>
+    <string>Centre d'aide...</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -107,6 +108,11 @@
   <action name="actionAPropos">
    <property name="text">
     <string>À propos...</string>
+   </property>
+  </action>
+  <action name="actionReportBug">
+   <property name="text">
+    <string>Signaler un bug...</string>
    </property>
   </action>
  </widget>

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QList>
+#include <QNetworkReply>
 
 #include "produititem.h"
 
@@ -21,12 +22,18 @@ public:
     ~MainWindow();
 
 public slots:
+    void dlVersionFinished(QNetworkReply* reply);
+    void dlNewVersionBtnClicked();
+
     void searchProduit(QString search);
     void on_actionNouveauProduit_triggered();
     void on_actionSupprimerProduit_triggered(bool dontAskConfirm = true);
     void on_actionGererMagasins_triggered();
     void on_actionAPropos_triggered();
     void on_actionAide_triggered();
+    void on_actionReportBug_triggered();
+
+    void updateStatusMessage();
 
     void deleteAsked();
 

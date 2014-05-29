@@ -6,5 +6,6 @@
     <qresource prefix="/icons">
         <file>remove.png</file>
         <file>add.png</file>
+        <file>icon-search.png</file>
     </qresource>
 </RCC>
