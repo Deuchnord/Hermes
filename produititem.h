@@ -52,6 +52,8 @@ public:
     void setFactures(QHash<QString, QByteArray> factures);
     void setGaranties(QHash<QString, QByteArray> garanties);
 
+    int getMagasin();
+
     void updateDescription();
     void openDialog(bool deleteOnCancel = false);
 

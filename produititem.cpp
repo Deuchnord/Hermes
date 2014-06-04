@@ -88,6 +88,11 @@ void ProduitItem::setImage(QPixmap image)
     ui->image->setPixmap(image);
 }
 
+int ProduitItem::getMagasin()
+{
+    return this->indexMagasin;
+}
+
 void ProduitItem::setMagasin(int index)
 {
     this->indexMagasin = index;

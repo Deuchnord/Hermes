@@ -29,6 +29,7 @@ public slots:
     void on_actionNouveauProduit_triggered();
     void on_actionSupprimerProduit_triggered(bool dontAskConfirm = true);
     void on_actionGererMagasins_triggered();
+    void magasinDeleted(int indexMagasin);
     void on_actionAPropos_triggered();
     void on_actionAide_triggered();
     void on_actionReportBug_triggered();

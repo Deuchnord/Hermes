@@ -19,8 +19,11 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
     ui->setupUi(this);
     parentWidget = parent;
 
+    // On ajoute une ligne vide, conrrespondant à un magasin non reseigné. Il correspond à un indexMagasin de -1
+    ui->comboMagasin->addItem("");
+
     // Récupération de la liste des magasins enregistrés
-    QFile fichierMagasins(QDir::homePath()+"/.deuchnord-hermes/manufacturers.xml");
+    QFile fichierMagasins(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
     fichierMagasins.open(QFile::ReadOnly);
     if(fichierMagasins.isOpen())
     {
@@ -55,7 +58,7 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
         ui->checkGarantieAVie->setChecked(true);
     }
 
-    ui->comboMagasin->setCurrentIndex(indexMagasin);
+    ui->comboMagasin->setCurrentIndex(indexMagasin+1);
     ui->checkSAV->setChecked(enSAV);
     ui->image->setPixmap(image);
     this->image = image;
@@ -115,6 +118,41 @@ void InfosProduitDialog::on_btnAjoutFacture_clicked()
     }
 }
 
+void InfosProduitDialog::on_btnScannerFacture_clicked()
+{
+    // Ne fonctionne que sous Linux pour le moment. Dépendances : libsane et imagemagick
+#ifdef Q_OS_LINUX
+    ScannerDialog *dialog = new ScannerDialog(this);
+    dialog->setModal(true);
+    dialog->show();
+
+    connect(dialog, SIGNAL(accepted()), SLOT(on_factureScanned()));
+#else
+    QMessageBox::warning(this, "Fonction indisponible", "Cette fonction n'est pas disponible pour votre système actuellement.\nDésolé pour la gêne.");
+#endif
+}
+
+void InfosProduitDialog::on_factureScanned()
+{
+    QString fileName = QDir::tempPath()+"/output.pdf";
+    QFile::rename(fileName, QDir::tempPath()+"/Facture.pdf");
+    fileName = QDir::tempPath()+"/Facture.pdf";
+
+    QFile fichier(fileName);
+    QFileInfo infoFile(fichier.fileName());
+    fichier.open(QFile::ReadOnly);
+    if(fichier.isReadable())
+    {
+        QByteArray contenuFichier = fichier.readAll();
+        fichier.close();
+
+        facturePDF.insert(infoFile.fileName(), contenuFichier);
+        ui->listFactures->addItem(infoFile.fileName());
+    }
+    else
+        QMessageBox::critical(this, "Erreur", "Une erreur s'est produite lors de l'ajout de votre document numérisé.\nVous pouvez toujours ajouter le document manuellement, il se trouve ici : "+fileName);
+}
+
 void InfosProduitDialog::on_listFactures_currentRowChanged()
 {
     ui->btnSupprFacture->setEnabled(true);
@@ -164,6 +202,41 @@ void InfosProduitDialog::on_btnAjoutGarantie_clicked()
     }
 }
 
+void InfosProduitDialog::on_btnScannerGarantie_clicked()
+{
+    // Ne fonctionne que sous Linux pour le moment. Dépendances : libsane et imagemagick
+#ifdef Q_OS_LINUX
+    ScannerDialog *dialog = new ScannerDialog(this);
+    dialog->setModal(true);
+    dialog->show();
+
+    connect(dialog, SIGNAL(accepted()), SLOT(on_garantieScanned()));
+#else
+    QMessageBox::warning(this, "Fonction indisponible", "Cette fonction n'est pas disponible pour votre système actuellement.\nDésolé pour la gêne.");
+#endif
+}
+
+void InfosProduitDialog::on_garantieScanned()
+{
+    QString fileName = QDir::tempPath()+"/output.pdf";
+    QFile::rename(fileName, QDir::tempPath()+"/Garantie.pdf");
+    fileName = QDir::tempPath()+"/Garantie.pdf";
+
+    QFile fichier(fileName);
+    QFileInfo infoFile(fichier.fileName());
+    fichier.open(QFile::ReadOnly);
+    if(fichier.isReadable())
+    {
+        QByteArray contenuFichier = fichier.readAll();
+        fichier.close();
+
+        garantiePDF.insert(infoFile.fileName(), contenuFichier);
+        ui->listGaranties->addItem(infoFile.fileName());
+    }
+    else
+        QMessageBox::critical(this, "Erreur", "Une erreur s'est produite lors de l'ajout de votre document numérisé.\nVous pouvez toujours ajouter le document manuellement, il se trouve ici : "+fileName);
+}
+
 void InfosProduitDialog::on_listGaranties_currentRowChanged()
 {
     ui->btnSupprGarantie->setEnabled(true);
@@ -205,7 +278,7 @@ void InfosProduitDialog::on_buttonBox_accepted()
         getParentItem()->setDateFinGarantie(QDate(1970, 1, 1));
 
     getParentItem()->setImage(this->image);
-    getParentItem()->setMagasin(ui->comboMagasin->currentIndex());
+    getParentItem()->setMagasin(ui->comboMagasin->currentIndex()-1);
     getParentItem()->setEnSAV(ui->checkSAV->isChecked());
     getParentItem()->setFactures(this->facturePDF);
     getParentItem()->setGaranties(this->garantiePDF);

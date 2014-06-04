@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    version = "0.2";
+    version = "0.3";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
@@ -43,9 +43,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addWidget(searchBox);
 
-    // Récupération de la configuration
+    // Migration des fichiers si l'utilisateur vient d'une version antérieure à la 0.3
+    QDir dir(QDir::homePath()+"/.deuchnord-hermes");
+    if(dir.exists(QDir::homePath()+"/.deuchnord-hermes"))
+        dir.rename(QDir::homePath()+"/.deuchnord-hermes", QDir::homePath()+"/deuchnord-hermes");
+    if(QFile::exists(QDir::homePath()+"/hermes.hrms"))
+        QFile::rename(QDir::homePath()+"/hermes.hrms", QDir::homePath()+"/deuchnord-hermes/products.hrms");
 
-    QFile saveFile(QDir::homePath()+"/hermes.hrms");
+    dir = QDir(QDir::homePath()+"/deuchnord-hermes");
+    if(!dir.exists(QDir::homePath()+"/deuchnord-hermes"))
+        dir.mkdir(QDir::homePath()+"/deuchnord-hermes");
+
+    // Récupération de la configuration
+    QFile saveFile(QDir::homePath()+"/deuchnord-hermes/products.hrms");
     QDataStream content(&saveFile);
     content.setVersion(QDataStream::Qt_5_0);
 
@@ -122,7 +132,7 @@ void MainWindow::searchProduit(QString search)
 
 void MainWindow::on_actionNouveauProduit_triggered()
 {
-    QFile fichierMagasins(QDir::homePath()+"/.deuchnord-hermes/manufacturers.xml");
+    QFile fichierMagasins(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
     fichierMagasins.open(QFile::ReadOnly);
     int nbMagasins = 0;
 
@@ -200,6 +210,21 @@ void MainWindow::on_actionGererMagasins_triggered()
     GestionMagasinsDialog *dialog = new GestionMagasinsDialog(this);
     dialog->setModal(true);
     dialog->show();
+    connect(dialog, SIGNAL(magasinDeleted(int)), SLOT(magasinDeleted(int)));
+}
+
+void MainWindow::magasinDeleted(int indexMagasin)
+{
+    // Si un magasin a été supprimé, on change le magasin pour une valeur vide.
+
+    for(int i = 0; i < ui->listeProduits->count(); i++)
+    {
+        ProduitItem* item = (ProduitItem*) ui->listeProduits->itemWidget(ui->listeProduits->item(i));
+        if(item->getMagasin() == indexMagasin)
+            item->setMagasin(-1);
+        if(item->getMagasin() > indexMagasin)
+            item->setMagasin(item->getMagasin()-1);
+    }
 }
 
 QListWidgetItem* MainWindow::ajouterProduit(ProduitItem *produit)
@@ -249,7 +274,7 @@ void MainWindow::updateStatusMessage()
 MainWindow::~MainWindow()
 {
     // Enregistrement de la configuration
-    QFile saveFile(QDir::homePath()+"/hermes.hrms");
+    QFile saveFile(QDir::homePath()+"/deuchnord-hermes/products.hrms");
     QDataStream content(&saveFile);
     content.setVersion(QDataStream::Qt_5_0);
     QList<ProduitInfo> listProd;

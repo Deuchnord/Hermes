@@ -13,12 +13,7 @@ GestionMagasinsDialog::GestionMagasinsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QDir dir(QDir::homePath()+"/.deuchnord-hermes");
-
-    if(!dir.exists())
-        dir.mkdir(QDir::homePath()+"/.deuchnord-hermes");
-
-    QFile fichierMagasins(QDir::homePath()+"/.deuchnord-hermes/manufacturers.xml");
+    QFile fichierMagasins(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
     fichierMagasins.open(QFile::ReadOnly);
     if(fichierMagasins.isOpen())
     {
@@ -69,7 +64,12 @@ void GestionMagasinsDialog::on_btnAjoutMagasin_clicked()
 
 void GestionMagasinsDialog::on_btnSupprMagasin_clicked()
 {
-    delete ui->listMagasins->currentItem();
+    if(QMessageBox::question(this, "Supprimer "+ui->listMagasins->currentItem()->text()+" ?", "Voulez-vous vraiment supprimer ce magasin ?<br />Tous les produits associés perdront cette information, <em>même si vous cliquez sur Annuler plus tard</em>.", QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+    {
+        int row = ui->listMagasins->currentRow();
+        delete ui->listMagasins->currentItem();
+        emit magasinDeleted(row);
+    }
 }
 
 void GestionMagasinsDialog::on_listMagasins_currentRowChanged()
@@ -94,7 +94,7 @@ void GestionMagasinsDialog::on_buttonBox_accepted()
         manufacturer.appendChild(nomMagasin);
     }
 
-    QFile fileManu(QDir::homePath()+"/.deuchnord-hermes/manufacturers.xml");
+    QFile fileManu(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
     if(fileManu.open(QFile::WriteOnly))
     {
         fileManu.write(dom.toString().toUtf8());

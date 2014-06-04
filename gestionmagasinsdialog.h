@@ -21,6 +21,9 @@ public slots:
     void on_listMagasins_currentRowChanged();
     void on_buttonBox_accepted();
 
+signals:
+    void magasinDeleted(int indexMagasin);
+
 private:
     Ui::GestionMagasinsDialog *ui;
 };

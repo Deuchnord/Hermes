@@ -6,7 +6,9 @@
 #include <QHash>
 #include <QListWidget>
 #include <QPixmap>
+
 #include "produititem.h"
+#include "scannerdialog.h"
 
 namespace Ui {
 class InfosProduitDialog;
@@ -23,24 +25,26 @@ public:
     ~InfosProduitDialog();
 
 public slots:
+    void on_checkGarantieAVie_toggled(bool checked);
     // Image
     void on_btnImageParcourir_clicked();
     void on_btnImageSupprimer_clicked();
     // Factures
     void on_btnAjoutFacture_clicked();
+    void on_btnScannerFacture_clicked();
+    void on_factureScanned();
     void on_listFactures_currentRowChanged();
     void on_listFactures_itemDoubleClicked(QListWidgetItem *item);
     void on_btnSupprFacture_clicked();
     // Garanties
     void on_btnAjoutGarantie_clicked();
+    void on_btnScannerGarantie_clicked();
+    void on_garantieScanned();
     void on_listGaranties_currentRowChanged();
     void on_listGaranties_itemDoubleClicked(QListWidgetItem *item);
     void on_btnSupprGarantie_clicked();
     // Boutons du bas
     void on_buttonBox_accepted();
-
-private slots:
-    void on_checkGarantieAVie_toggled(bool checked);
 
 private:
     QPixmap image;

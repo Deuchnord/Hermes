@@ -7,5 +7,6 @@
         <file>remove.png</file>
         <file>add.png</file>
         <file>icon-search.png</file>
+        <file>scanner.png</file>
     </qresource>
 </RCC>

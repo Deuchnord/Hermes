@@ -197,6 +197,20 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="btnScannerFacture">
+              <property name="toolTip">
+               <string>Numériser une facture et l'ajouter</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/icons/scanner.png</normaloff>:/icons/scanner.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="btnSupprFacture">
               <property name="enabled">
                <bool>false</bool>
@@ -256,6 +270,20 @@ Vous pouvez ouvrir une facture ou une garantie en double-cliquant dessus.</strin
               <property name="icon">
                <iconset resource="resources.qrc">
                 <normaloff>:/icons/add.png</normaloff>:/icons/add.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnScannerGarantie">
+              <property name="toolTip">
+               <string>Numériser une garantie et l'ajouter</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/icons/scanner.png</normaloff>:/icons/scanner.png</iconset>
               </property>
              </widget>
             </item>
