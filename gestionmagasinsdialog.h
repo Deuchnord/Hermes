@@ -2,6 +2,7 @@
 #define GESTIONMAGASINSDIALOG_H
 
 #include <QDialog>
+#include <QSettings>
 
 namespace Ui {
 class GestionMagasinsDialog;
@@ -26,6 +27,8 @@ signals:
 
 private:
     Ui::GestionMagasinsDialog *ui;
+    QSettings *settings;
+    QString placeSave;
 };
 
 #endif // GESTIONMAGASINSDIALOG_H

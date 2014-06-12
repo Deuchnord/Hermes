@@ -13,7 +13,10 @@ GestionMagasinsDialog::GestionMagasinsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QFile fichierMagasins(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
+    settings = new QSettings("Deuchnord", "Hermes");
+    placeSave = settings->value("placeSave").toString();
+
+    QFile fichierMagasins(placeSave+"/deuchnord-hermes/manufacturers.xml");
     fichierMagasins.open(QFile::ReadOnly);
     if(fichierMagasins.isOpen())
     {
@@ -94,7 +97,7 @@ void GestionMagasinsDialog::on_buttonBox_accepted()
         manufacturer.appendChild(nomMagasin);
     }
 
-    QFile fileManu(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
+    QFile fileManu(placeSave+"/deuchnord-hermes/manufacturers.xml");
     if(fileManu.open(QFile::WriteOnly))
     {
         fileManu.write(dom.toString().toUtf8());

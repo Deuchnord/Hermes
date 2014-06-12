@@ -21,21 +21,24 @@ SOURCES += main.cpp\
     infosproduitdialog.cpp \
     gestionmagasinsdialog.cpp \
     aboutdialog.cpp \
-    scannerdialog.cpp
+    scannerdialog.cpp \
+    settingsdialog.cpp
 
 HEADERS  += mainwindow.h \
     produititem.h \
     infosproduitdialog.h \
     gestionmagasinsdialog.h \
     aboutdialog.h \
-    scannerdialog.h
+    scannerdialog.h \
+    settingsdialog.h
 
 FORMS    += mainwindow.ui \
     produititem.ui \
     infosproduitdialog.ui \
     gestionmagasinsdialog.ui \
     aboutdialog.ui \
-    scannerdialog.ui
+    scannerdialog.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     resources.qrc

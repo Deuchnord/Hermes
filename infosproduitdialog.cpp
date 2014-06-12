@@ -78,6 +78,12 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
     ui->txtNom->setFocus();
     ui->listFactures->setCurrentItem(ui->listFactures->item(0));
     ui->listGaranties->setCurrentItem(ui->listGaranties->item(0));
+
+#if !defined Q_OS_LINUX
+    // Le bouton ne sera pas disponible sur les systèmes autres que GNU/Linux
+    ui->btnScannerFacture->hide();
+    ui->btnScannerGarantie->hide();
+#endif
 }
 
 void InfosProduitDialog::on_btnImageParcourir_clicked()
@@ -99,7 +105,7 @@ void InfosProduitDialog::on_btnImageSupprimer_clicked()
 
 void InfosProduitDialog::on_btnAjoutFacture_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Sélectionnez une facture", "", "Fichiers PDF (*.pdf);;Image (*.jpg *.jpeg *.png)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Sélectionnez une facture", "", "Fichiers supportés (*.pdf *.jpg *.jpeg *.png);;Fichiers PDF (*.pdf);;Images (*.jpg *.jpeg *.png)");
     if(fileName != "")
     {
         QFile fichier(fileName);
@@ -120,16 +126,13 @@ void InfosProduitDialog::on_btnAjoutFacture_clicked()
 
 void InfosProduitDialog::on_btnScannerFacture_clicked()
 {
-    // Ne fonctionne que sous Linux pour le moment. Dépendances : libsane et imagemagick
-#ifdef Q_OS_LINUX
+    // Ne fonctionne que sous Linux pour le moment. Dépendances : sane et imagemagick
+
     ScannerDialog *dialog = new ScannerDialog(this);
     dialog->setModal(true);
     dialog->show();
 
     connect(dialog, SIGNAL(accepted()), SLOT(on_factureScanned()));
-#else
-    QMessageBox::warning(this, "Fonction indisponible", "Cette fonction n'est pas disponible pour votre système actuellement.\nDésolé pour la gêne.");
-#endif
 }
 
 void InfosProduitDialog::on_factureScanned()
@@ -205,15 +208,11 @@ void InfosProduitDialog::on_btnAjoutGarantie_clicked()
 void InfosProduitDialog::on_btnScannerGarantie_clicked()
 {
     // Ne fonctionne que sous Linux pour le moment. Dépendances : libsane et imagemagick
-#ifdef Q_OS_LINUX
     ScannerDialog *dialog = new ScannerDialog(this);
     dialog->setModal(true);
     dialog->show();
 
     connect(dialog, SIGNAL(accepted()), SLOT(on_garantieScanned()));
-#else
-    QMessageBox::warning(this, "Fonction indisponible", "Cette fonction n'est pas disponible pour votre système actuellement.\nDésolé pour la gêne.");
-#endif
 }
 
 void InfosProduitDialog::on_garantieScanned()

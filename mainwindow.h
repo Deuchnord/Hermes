@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QList>
 #include <QNetworkReply>
+#include <QSettings>
 
 #include "produititem.h"
 
@@ -38,8 +39,13 @@ public slots:
 
     void deleteAsked();
 
+    void on_actionSettings_triggered();
+    void settings_dontSaveOnQuit();
+
 private:
     Ui::MainWindow *ui;
+    QSettings *settings;
+    bool saveOnQuit;
     QListWidgetItem *ajouterProduit(ProduitItem *produit);
     QLineEdit *searchBox;
     QString version;

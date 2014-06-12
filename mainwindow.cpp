@@ -2,6 +2,7 @@
 #include "produititem.h"
 #include "gestionmagasinsdialog.h"
 #include "aboutdialog.h"
+#include "settingsdialog.h"
 #include "ui_mainwindow.h"
 
 #include <QSpacerItem>
@@ -30,7 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    version = "0.3";
+    saveOnQuit = true;
+
+    version = "0.4";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
@@ -50,12 +53,16 @@ MainWindow::MainWindow(QWidget *parent) :
     if(QFile::exists(QDir::homePath()+"/hermes.hrms"))
         QFile::rename(QDir::homePath()+"/hermes.hrms", QDir::homePath()+"/deuchnord-hermes/products.hrms");
 
-    dir = QDir(QDir::homePath()+"/deuchnord-hermes");
-    if(!dir.exists(QDir::homePath()+"/deuchnord-hermes"))
-        dir.mkdir(QDir::homePath()+"/deuchnord-hermes");
-
     // Récupération de la configuration
-    QFile saveFile(QDir::homePath()+"/deuchnord-hermes/products.hrms");
+    settings = new QSettings("Deuchnord", "Hermes");
+    QString placeSave = settings->value("placeSave").toString();
+    if(placeSave == "")
+    {
+        settings->setValue("placeSave", QDir::homePath());
+        placeSave = settings->value("placeSave").toString();
+    }
+
+    QFile saveFile(placeSave + "/deuchnord-hermes/products.hrms");
     QDataStream content(&saveFile);
     content.setVersion(QDataStream::Qt_5_0);
 
@@ -239,6 +246,21 @@ QListWidgetItem* MainWindow::ajouterProduit(ProduitItem *produit)
     return widgetItem;
 }
 
+
+void MainWindow::on_actionSettings_triggered()
+{
+    SettingsDialog *settingsDialog = new SettingsDialog(this);
+    settingsDialog->setModal(true);
+    settingsDialog->show();
+
+    connect(settingsDialog, SIGNAL(dontSaveOnQuit()), SLOT(settings_dontSaveOnQuit()));
+}
+
+void MainWindow::settings_dontSaveOnQuit()
+{
+    saveOnQuit = false;
+}
+
 void MainWindow::on_actionAPropos_triggered()
 {
     AboutDialog *dialog = new AboutDialog(this, version);
@@ -274,25 +296,32 @@ void MainWindow::updateStatusMessage()
 MainWindow::~MainWindow()
 {
     // Enregistrement de la configuration
-    QFile saveFile(QDir::homePath()+"/deuchnord-hermes/products.hrms");
-    QDataStream content(&saveFile);
-    content.setVersion(QDataStream::Qt_5_0);
-    QList<ProduitInfo> listProd;
-
-    if(saveFile.open(QFile::WriteOnly))
+    if(saveOnQuit)
     {
-        for(int i = 0; i < ui->listeProduits->count(); i++)
+        QString place = settings->value("placeSave").toString();
+        QDir dir(place+"/deuchnord-hermes");
+        if(!dir.exists())
+            dir.mkdir(place+"/deuchnord-hermes");
+
+        QFile saveFile(place+"/deuchnord-hermes/products.hrms");
+        QDataStream content(&saveFile);
+        content.setVersion(QDataStream::Qt_5_0);
+        QList<ProduitInfo> listProd;
+
+        if(saveFile.open(QFile::WriteOnly))
         {
-            ProduitItem* item = (ProduitItem*) ui->listeProduits->itemWidget(ui->listeProduits->item(i));
-            ProduitInfo prod = item->getProduitInfo();
-            listProd << prod;
+            for(int i = 0; i < ui->listeProduits->count(); i++)
+            {
+                ProduitItem* item = (ProduitItem*) ui->listeProduits->itemWidget(ui->listeProduits->item(i));
+                ProduitInfo prod = item->getProduitInfo();
+                listProd << prod;
+            }
         }
+
+        content << listProd;
+
+        saveFile.close();
     }
-
-    content << listProd;
-
-    saveFile.close();
 
     delete ui;
 }
-

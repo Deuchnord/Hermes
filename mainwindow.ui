@@ -53,7 +53,14 @@
     <addaction name="actionReportBug"/>
     <addaction name="actionAPropos"/>
    </widget>
+   <widget class="QMenu" name="menuOutil">
+    <property name="title">
+     <string>Outils</string>
+    </property>
+    <addaction name="actionSettings"/>
+   </widget>
    <addaction name="menuFichier"/>
+   <addaction name="menuOutil"/>
    <addaction name="menuAide"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -113,6 +120,11 @@
   <action name="actionReportBug">
    <property name="text">
     <string>Signaler un bug...</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Préférences</string>
    </property>
   </action>
  </widget>
