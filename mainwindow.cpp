@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     saveOnQuit = true;
 
-    version = "0.4";
+    version = "0.4.1";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
@@ -139,7 +139,7 @@ void MainWindow::searchProduit(QString search)
 
 void MainWindow::on_actionNouveauProduit_triggered()
 {
-    QFile fichierMagasins(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
+    QFile fichierMagasins(settings->value("placeSave").toString()+"/deuchnord-hermes/manufacturers.xml");
     fichierMagasins.open(QFile::ReadOnly);
     int nbMagasins = 0;
 

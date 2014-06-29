@@ -11,6 +11,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QTransform>
+#include <QSettings>
 
 InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image, int indexMagasin, bool enSAV, QHash<QString, QByteArray> facturePDF, QHash<QString, QByteArray> garantiePDF) :
     QDialog(mainWindow),
@@ -23,7 +24,8 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
     ui->comboMagasin->addItem("");
 
     // Récupération de la liste des magasins enregistrés
-    QFile fichierMagasins(QDir::homePath()+"/deuchnord-hermes/manufacturers.xml");
+    QSettings *settings = new QSettings("Deuchnord", "Hermes");
+    QFile fichierMagasins(settings->value("placeSave").toString()+"/deuchnord-hermes/manufacturers.xml");
     fichierMagasins.open(QFile::ReadOnly);
     if(fichierMagasins.isOpen())
     {
