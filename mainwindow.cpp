@@ -33,12 +33,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     saveOnQuit = true;
 
-    version = "0.4.1";
+    version = "0.5";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
-    searchBox->setPlaceholderText("Rechercher...");
-    searchBox->setToolTip("Recherchez un produit à partir de son nom.\nLa casse n'est pas prise en compte.");
+    searchBox->setPlaceholderText(tr("Rechercher..."));
     searchBox->setClearButtonEnabled(true);
 
     connect(searchBox, SIGNAL(textChanged(QString)), SLOT(searchProduit(QString)));
@@ -99,8 +98,8 @@ void MainWindow::dlVersionFinished(QNetworkReply *reply)
     QString versionAvailable = reply->readAll();
     if(versionAvailable != "" && version != versionAvailable)
     {
-        ui->statusBar->showMessage("Une nouvelle version ("+versionAvailable+") est disponible !");
-        QPushButton* btnUpdate = new QPushButton("Télécharger la nouvelle version");
+        ui->statusBar->showMessage(tr("Une nouvelle version (%1) est disponible !", "%1 represents the number of the new version (for instance: 0.4.1)").arg(versionAvailable));
+        QPushButton* btnUpdate = new QPushButton(tr("Télécharger la nouvelle version"));
         connect(btnUpdate, SIGNAL(clicked()), this, SLOT(dlNewVersionBtnClicked()));
         ui->statusBar->addPermanentWidget(btnUpdate);
     }
@@ -166,12 +165,12 @@ void MainWindow::on_actionNouveauProduit_triggered()
 
     if(nbMagasins == 0)
     {
-        QMessageBox::critical(this, "Erreur", "Aucun magasin ne semble avoir été enregistré.\nVeuillez les enregistrer avant d'entrer vos produits.");
+        QMessageBox::critical(this, tr("Erreur"), tr("Aucun magasin ne semble avoir été enregistré.\nVeuillez les enregistrer avant d'entrer vos produits."));
         ui->actionGererMagasins->trigger();
     }
     else
     {
-        ProduitItem *prod = new ProduitItem(this, "Nouveau produit", QDate::currentDate(), QDate::currentDate().addYears(1));
+        ProduitItem *prod = new ProduitItem(this, tr("Nouveau produit", "Showed in the field \"Name\" in the product information window by default."), QDate::currentDate(), QDate::currentDate().addYears(1));
         prod->openDialog(true);
         QListWidgetItem* item = ajouterProduit(prod);
         item->setSelected(true);
@@ -193,7 +192,7 @@ void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
 
         int answer;
         if(!dontAskConfirm)
-            answer = QMessageBox::question(this, "Supprimer le produit", "Êtes-vous sûr de vouloir supprimer ce produit ?\nCette action n'est pas réversible.", QMessageBox::Yes | QMessageBox::No);
+            answer = QMessageBox::question(this, tr("Supprimer le produit"), tr("Êtes-vous sûr de vouloir supprimer ce produit ?\nCette action n'est pas réversible."), QMessageBox::Yes | QMessageBox::No);
         else
             answer = QMessageBox::Yes;
 
@@ -290,7 +289,7 @@ void MainWindow::updateStatusMessage()
         if(!ui->listeProduits->item(i)->isHidden())
             nb++;
 
-    ui->statusBar->showMessage(QString::number(nb)+" produit(s) affiché(s).");
+    ui->statusBar->showMessage(tr("%n produit(s) affiché(s).", "", nb));
 }
 
 MainWindow::~MainWindow()

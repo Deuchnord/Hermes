@@ -46,7 +46,7 @@ GestionMagasinsDialog::GestionMagasinsDialog(QWidget *parent) :
 
 void GestionMagasinsDialog::on_btnAjoutMagasin_clicked()
 {
-    QString nom = QInputDialog::getText(this, "Ajouter un magasin", "Veuillez entrer le nom du nouveau magasin :");
+    QString nom = QInputDialog::getText(this, tr("Ajouter un magasin"), tr("Veuillez entrer le nom du nouveau magasin :"));
     if(nom != "")
     {
         int nb = ui->listMagasins->count();
@@ -59,7 +59,7 @@ void GestionMagasinsDialog::on_btnAjoutMagasin_clicked()
         }
 
         if(alreadyHere)
-            QMessageBox::warning(this, "Ajout impossible", "Le magasin est déjà présent dans la liste !");
+            QMessageBox::warning(this, tr("Ajout impossible"), tr("Le magasin est déjà présent dans la liste !"));
         else
             ui->listMagasins->addItem(nom);
     }
@@ -67,7 +67,7 @@ void GestionMagasinsDialog::on_btnAjoutMagasin_clicked()
 
 void GestionMagasinsDialog::on_btnSupprMagasin_clicked()
 {
-    if(QMessageBox::question(this, "Supprimer "+ui->listMagasins->currentItem()->text()+" ?", "Voulez-vous vraiment supprimer ce magasin ?<br />Tous les produits associés perdront cette information, <em>même si vous cliquez sur Annuler plus tard</em>.", QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+    if(QMessageBox::question(this, tr("Suppression"), tr("Voulez-vous vraiment supprimer ce magasin ?<br />Tous les produits associés perdront cette information, <em>même si vous cliquez sur Annuler plus tard</em>."), QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
     {
         int row = ui->listMagasins->currentRow();
         delete ui->listMagasins->currentItem();

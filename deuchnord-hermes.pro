@@ -40,6 +40,8 @@ FORMS    += mainwindow.ui \
     scannerdialog.ui \
     settingsdialog.ui
 
+TRANSLATIONS =  strings.ts
+
 RESOURCES += \
     resources.qrc
 

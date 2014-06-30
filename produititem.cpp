@@ -38,7 +38,7 @@ ProduitItem::ProduitItem(QWidget *parent, QString nomProduit, QDate dateAchat, Q
     this->image = image;
     this->image.scaled(QSize(128, 128), Qt::KeepAspectRatio);
     ui->image->setPixmap(this->image);
-    ui->btnMoreInfo->setToolTip("Ouvre une fenêtre contenant toutes les informations\nsur votre "+nomProduit+".");
+    ui->btnMoreInfo->setToolTip(tr("Ouvre une fenêtre contenant toutes les informations\nsur votre %1.", "%1 represents the name of the product, as given in the Name field.").arg(nomProduit));
 }
 
 void ProduitItem::on_btnMoreInfo_clicked(bool deleteOnCancel)
@@ -117,40 +117,19 @@ void ProduitItem::setGaranties(QHash<QString, QByteArray> garanties)
 // Permet de mettre à jour le petit texte en-dessous du nom du produit
 void ProduitItem::updateDescription()
 {
-    QString jourAchat = QString::number(dateAchat.day());
-
-    if(dateAchat.day() < 10)
-        jourAchat = "0"+jourAchat;
-
-    QString moisAchat = QString::number(dateAchat.month());
-
-    if(dateAchat.month() < 10)
-        moisAchat = "0"+moisAchat;
-
-    descriptionListe = "Acheté le "+jourAchat+"/"+moisAchat+"/"+QString::number(dateAchat.year())+", ";
-
-    QString jourFinGarantie = QString::number(dateFinGarantie.day());
-
-    if(dateFinGarantie.day() < 10)
-        jourFinGarantie = "0"+jourFinGarantie;
-
-    QString moisFinGarantie = QString::number(dateFinGarantie.month());
-
-    if(dateFinGarantie.month() < 10)
-        moisFinGarantie = "0"+moisFinGarantie;
 
     if(dateFinGarantie != QDate(1970, 1, 1))
     {
         if(QDate::currentDate() < dateFinGarantie)
-            descriptionListe += "fin de la garantie le "+jourFinGarantie+"/"+moisFinGarantie+"/"+QString::number(dateFinGarantie.year());
+            descriptionListe = tr("Acheté le %1, fin de la garantie le %2", "%1 and %2 are dates").arg(dateAchat.toString(Qt::LocaleDate), dateAchat.toString(Qt::LocaleDate));
         else
-            descriptionListe += "garantie expirée";
+            descriptionListe = tr("Acheté le %1, garantie expirée", "%1 is a date").arg(dateAchat.toString(Qt::LocaleDate));
     }
     else
-        descriptionListe += "garantie à vie";
+        descriptionListe = tr("Acheté le %1, garantie à vie", "%1 is a date").arg(dateAchat.toString(Qt::LocaleDate));
 
     if(this->enSAV)
-        descriptionListe += "\nParti en SAV";
+        descriptionListe += tr("\nParti en SAV");
 
     ui->infosProduit->setText(descriptionListe);
 }

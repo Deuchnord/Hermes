@@ -65,10 +65,10 @@ void ScannerDialog::scanTestFinished(int r = 0)
         if(c == 0)
             QDesktopServices::openUrl(QUrl("file://"+QDir::tempPath()+"/test.pdf"));
         else
-            QMessageBox::critical(this, "Erreur", "Votre document a pu être numérisé, mais un problème est survenu lors de son traitement.\nErreur "+QString::number(c));
+            QMessageBox::critical(this, tr("Erreur"), tr("Votre document a pu être numérisé, mais un problème est survenu lors de son traitement.\nErreur %1").arg(QString::number(c)));
     }
     else
-        QMessageBox::critical(this, "Erreur", "Impossible de communiquer avec votre scanner. Vérifiez qu'il est bien relié à l'ordinateur' et qu'il est sous tension, puis réessayez.\nSi le problème persiste, il est probable que votre scanner ne soit pas pris en charge.");
+        QMessageBox::critical(this, tr("Erreur"), tr("Impossible de communiquer avec votre scanner. Vérifiez qu'il est bien relié à l'ordinateur' et qu'il est sous tension, puis réessayez.\nSi le problème persiste, il est probable que votre scanner ne soit pas pris en charge."));
 #endif
 }
 
@@ -97,10 +97,10 @@ void ScannerDialog::scanFinished(int r)
     {
         int c = system(s.c_str());
         if(c != 0)
-            QMessageBox::critical(this, "Erreur", "Votre document a pu être numérisé, mais un problème est survenu lors de son traitement.\nErreur "+QString::number(c));
+            QMessageBox::critical(this, tr("Erreur"), tr("Votre document a pu être numérisé, mais un problème est survenu lors de son traitement.\nErreur %1").arg(QString::number(c)));
         else
             this->accept();
     }
     else
-        QMessageBox::critical(this, "Erreur", "Impossible de communiquer avec votre scanner. Vérifiez qu'il est bien relié à l'ordinateur' et qu'il est sous tension, puis réessayez.\nSi le problème persiste, il est probable que votre scanner ne soit pas pris en charge.");
+        QMessageBox::critical(this, tr("Erreur"), tr("Impossible de communiquer avec votre scanner. Vérifiez qu'il est bien relié à l'ordinateur' et qu'il est sous tension, puis réessayez.\nSi le problème persiste, il est probable que votre scanner ne soit pas pris en charge."));
 }

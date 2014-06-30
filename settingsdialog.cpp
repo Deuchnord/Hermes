@@ -19,13 +19,13 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
 void SettingsDialog::on_btnChangeSavePlace_clicked()
 {
-    QString savePlace = QFileDialog::getExistingDirectory(this, "Choisir un dossier de sauvegarde", settings->value("placeSave").toString());
+    QString savePlace = QFileDialog::getExistingDirectory(this, tr("Choisir un dossier de sauvegarde"), settings->value("placeSave").toString());
     bool ok = true;
     bool replaceFile = false;
     QDir dir(savePlace+"/deuchnord-hermes");
     if(dir.exists())
     {
-        int whatToDo = QMessageBox::question(this, "Confirmation", "Des fichiers appartenant à Hermès semblent être déjà présents. Que voulez-vous faire ?<br />Cliquez sur <em>Appliquer</em> pour utiliser les fichiers présents à cet emplacement.<br />Cliquez sur <em>Réinitialiser</em> pour écraser les fichiers présents à cet emplacement.<br />Cliquez sur <em>Annuler</em> pour ne pas changer l'emplacement.", QMessageBox::Apply | QMessageBox::Reset | QMessageBox::Cancel, QMessageBox::Cancel);
+        int whatToDo = QMessageBox::question(this, tr("Confirmation"), tr("Des fichiers appartenant à Hermès semblent être déjà présents. Que voulez-vous faire ?<br />Cliquez sur <em>Appliquer</em> pour utiliser les fichiers présents à cet emplacement.<br />Cliquez sur <em>Réinitialiser</em> pour écraser les fichiers présents à cet emplacement.<br />Cliquez sur <em>Annuler</em> pour ne pas changer l'emplacement.", "The texts in italic should correspond to the texts on the buttons."), QMessageBox::Apply | QMessageBox::Reset | QMessageBox::Cancel, QMessageBox::Cancel);
 
         switch(whatToDo)
         {
@@ -75,10 +75,10 @@ void SettingsDialog::on_buttonBox_accepted()
     // Affichage d'un message s'il faut redémarrer Hermès
     if(restartNeeded)
     {
-        QString message = "Certains changements dans votre configuration nécessite de relancer Hermès.";
+        QString message = tr("Certains changements dans votre configuration nécessitent de relancer Hermès.");
         if(!restartWillSave)
-            message += "\nAttention, les changements effectués ne seront pas enregistrés !";
-        QMessageBox::warning(this, "Mise à jour de la configuration", message);
+            message += tr("\nAttention, les changements effectués ne seront pas enregistrés !");
+        QMessageBox::warning(this, tr("Mise à jour de la configuration"), message);
     }
 }
 

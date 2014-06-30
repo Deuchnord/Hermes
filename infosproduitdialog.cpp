@@ -20,7 +20,7 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
     ui->setupUi(this);
     parentWidget = parent;
 
-    // On ajoute une ligne vide, conrrespondant à un magasin non reseigné. Il correspond à un indexMagasin de -1
+    // On ajoute une ligne vide, correspondant à un magasin non renseigné. Il correspond à un indexMagasin de -1
     ui->comboMagasin->addItem("");
 
     // Récupération de la liste des magasins enregistrés
@@ -90,7 +90,7 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
 
 void InfosProduitDialog::on_btnImageParcourir_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Sélectionnez une image", "", "Images supportées (*.bmp *.gif *.jpg *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Sélectionnez une image"), "", tr("Images supportées")+" (*.bmp *.gif *.jpg *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)");
     if(filename != "")
     {
         image = QPixmap(filename);
@@ -107,7 +107,7 @@ void InfosProduitDialog::on_btnImageSupprimer_clicked()
 
 void InfosProduitDialog::on_btnAjoutFacture_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Sélectionnez une facture", "", "Fichiers supportés (*.pdf *.jpg *.jpeg *.png);;Fichiers PDF (*.pdf);;Images (*.jpg *.jpeg *.png)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Sélectionnez une facture"), "", tr("Fichiers supportés")+" (*.pdf *.jpg *.jpeg *.png);;"+tr("Fichiers PDF")+" (*.pdf);;"+tr("Images")+" (*.jpg *.jpeg *.png)");
     if(fileName != "")
     {
         QFile fichier(fileName);
@@ -122,7 +122,7 @@ void InfosProduitDialog::on_btnAjoutFacture_clicked()
             ui->listFactures->addItem(infoFile.fileName());
         }
         else
-            QMessageBox::critical(this, "Erreur", "Impossible de lire le fichier "+fichier.fileName()+"\nVérifiez qu'il est bien accessible en lecture et réessayez.");
+            QMessageBox::critical(this, tr("Erreur"), tr("Impossible de lire le fichier %1\nVérifiez qu'il est bien accessible en lecture et réessayez.", "%1 represents the file name").arg(fichier.fileName()));
     }
 }
 
@@ -155,7 +155,7 @@ void InfosProduitDialog::on_factureScanned()
         ui->listFactures->addItem(infoFile.fileName());
     }
     else
-        QMessageBox::critical(this, "Erreur", "Une erreur s'est produite lors de l'ajout de votre document numérisé.\nVous pouvez toujours ajouter le document manuellement, il se trouve ici : "+fileName);
+        QMessageBox::critical(this, tr("Erreur"), tr("Une erreur s'est produite lors de l'ajout de votre document numérisé.\nVous pouvez toujours ajouter le document manuellement, il se trouve ici : %1", "%1 represents the place of the file in the temp directory").arg(fileName));
 }
 
 void InfosProduitDialog::on_listFactures_currentRowChanged()
@@ -175,7 +175,7 @@ void InfosProduitDialog::on_listFactures_itemDoubleClicked(QListWidgetItem *item
 
 void InfosProduitDialog::on_btnSupprFacture_clicked()
 {
-    if(QMessageBox::question(this, "Hermès", "Voulez-vous vraiment supprimer cette facture ?\nCette action n'est pas réversible.", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+    if(QMessageBox::question(this, tr("Hermès"), tr("Voulez-vous vraiment supprimer cette facture ?\nCette action n'est pas réversible."), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
     {
         QListWidgetItem *item = ui->listFactures->selectedItems().value(0);
         facturePDF.remove(item->text());
@@ -188,7 +188,7 @@ void InfosProduitDialog::on_btnSupprFacture_clicked()
 
 void InfosProduitDialog::on_btnAjoutGarantie_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Sélectionnez une fiche garantie", "", "Fichiers PDF (*.pdf);;Image (*.jpg *.jpeg *.png)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Sélectionnez une fiche garantie"), "", tr("Fichiers supportés")+" (*.pdf *.jpg *.jpeg *.png);;"+tr("Fichiers PDF")+" (*.pdf);;"+tr("Images")+" (*.jpg *.jpeg *.png)");
     if(fileName != "")
     {
         QFile fichier(fileName);
@@ -203,7 +203,7 @@ void InfosProduitDialog::on_btnAjoutGarantie_clicked()
             ui->listGaranties->addItem(infoFile.fileName());
         }
         else
-            QMessageBox::critical(this, "Erreur", "Impossible de lire le fichier "+fichier.fileName()+"\nVérifiez qu'il est bien accessible en lecture et réessayez.");
+            QMessageBox::critical(this, tr("Erreur"), tr("Impossible de lire le fichier %1\nVérifiez qu'il est bien accessible en lecture et réessayez.", "%1 represents the file name").arg(fichier.fileName()));
     }
 }
 
@@ -235,7 +235,7 @@ void InfosProduitDialog::on_garantieScanned()
         ui->listGaranties->addItem(infoFile.fileName());
     }
     else
-        QMessageBox::critical(this, "Erreur", "Une erreur s'est produite lors de l'ajout de votre document numérisé.\nVous pouvez toujours ajouter le document manuellement, il se trouve ici : "+fileName);
+        QMessageBox::critical(this, tr("Erreur"), tr("Une erreur s'est produite lors de l'ajout de votre document numérisé.\nVous pouvez toujours ajouter le document manuellement, il se trouve ici : %1", "%1 represents the place of the file in the temp directory").arg(fileName));
 }
 
 void InfosProduitDialog::on_listGaranties_currentRowChanged()
@@ -255,7 +255,7 @@ void InfosProduitDialog::on_listGaranties_itemDoubleClicked(QListWidgetItem *ite
 
 void InfosProduitDialog::on_btnSupprGarantie_clicked()
 {
-    if(QMessageBox::question(this, "Hermès", "Voulez-vous vraiment supprimer cette fiche garantie ?\nCette action n'est pas réversible.", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+    if(QMessageBox::question(this, tr("Hermès"), tr("Voulez-vous vraiment supprimer cette fiche garantie ?\nCette action n'est pas réversible."), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
     {
         QListWidgetItem *item = ui->listGaranties->selectedItems().value(0);
         garantiePDF.remove(item->text());

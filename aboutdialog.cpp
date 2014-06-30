@@ -8,13 +8,13 @@ AboutDialog::AboutDialog(QWidget *parent, QString version) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
-    ui->version->setText("Version "+version);
+    ui->version->setText(tr("Version ")+version);
     ui->btnFermer->setFocus();
 }
 
 void AboutDialog::on_btnQt_clicked()
 {
-    QMessageBox::aboutQt(this, "À propos de Qt");
+    QMessageBox::aboutQt(this, tr("À propos de Qt"));
 }
 
 AboutDialog::~AboutDialog()
