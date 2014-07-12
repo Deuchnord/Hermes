@@ -121,7 +121,7 @@ void ProduitItem::updateDescription()
     if(dateFinGarantie != QDate(1970, 1, 1))
     {
         if(QDate::currentDate() < dateFinGarantie)
-            descriptionListe = tr("Acheté le %1, fin de la garantie le %2", "%1 and %2 are dates").arg(dateAchat.toString(Qt::LocaleDate), dateAchat.toString(Qt::LocaleDate));
+            descriptionListe = tr("Acheté le %1, fin de la garantie le %2", "%1 and %2 are dates").arg(dateAchat.toString(Qt::LocaleDate), dateFinGarantie.toString(Qt::LocaleDate));
         else
             descriptionListe = tr("Acheté le %1, garantie expirée", "%1 is a date").arg(dateAchat.toString(Qt::LocaleDate));
     }

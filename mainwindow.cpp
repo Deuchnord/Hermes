@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     saveOnQuit = true;
 
-    version = "0.5";
+    version = "0.5.1";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
