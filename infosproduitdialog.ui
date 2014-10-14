@@ -73,7 +73,11 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QComboBox" name="comboMagasin"/>
+        <widget class="QComboBox" name="comboMagasin">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item row="7" column="1">
         <widget class="QCheckBox" name="checkSAV">

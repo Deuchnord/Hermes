@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     saveOnQuit = true;
 
-    version = "0.5.1";
+    version = "0.6";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
@@ -138,45 +138,12 @@ void MainWindow::searchProduit(QString search)
 
 void MainWindow::on_actionNouveauProduit_triggered()
 {
-    QFile fichierMagasins(settings->value("placeSave").toString()+"/deuchnord-hermes/manufacturers.xml");
-    fichierMagasins.open(QFile::ReadOnly);
-    int nbMagasins = 0;
-
-    if(fichierMagasins.isOpen())
-    {
-        QString contenuFichier = fichierMagasins.readAll();
-        fichierMagasins.close();
-
-        QDomDocument dom;
-        dom.setContent(contenuFichier);
-        QDomElement root = dom.firstChildElement();
-        QDomElement manufacturer;
-        QDomNode node = root.firstChild();
-
-        while(!node.isNull())
-        {
-            manufacturer = node.toElement();
-            if(manufacturer.tagName() == "manufacturer")
-                nbMagasins++;
-
-            node = node.nextSibling();
-        }
-    }
-
-    if(nbMagasins == 0)
-    {
-        QMessageBox::critical(this, tr("Erreur"), tr("Aucun magasin ne semble avoir été enregistré.\nVeuillez les enregistrer avant d'entrer vos produits."));
-        ui->actionGererMagasins->trigger();
-    }
-    else
-    {
-        ProduitItem *prod = new ProduitItem(this, tr("Nouveau produit", "Showed in the field \"Name\" in the product information window by default."), QDate::currentDate(), QDate::currentDate().addYears(1));
-        prod->openDialog(true);
-        QListWidgetItem* item = ajouterProduit(prod);
-        item->setSelected(true);
-        connect(prod, SIGNAL(deleteAsked()), SLOT(deleteAsked()));
-        ui->actionSupprimerProduit->setEnabled(true);
-    }
+    ProduitItem *prod = new ProduitItem(this, tr("Nouveau produit", "Showed in the field \"Name\" in the product information window by default."), QDate::currentDate(), QDate::currentDate().addYears(1));
+    prod->openDialog(true);
+    QListWidgetItem* item = ajouterProduit(prod);
+    item->setSelected(true);
+    connect(prod, SIGNAL(deleteAsked()), SLOT(deleteAsked()));
+    ui->actionSupprimerProduit->setEnabled(true);
 }
 
 void MainWindow::deleteAsked()
@@ -199,6 +166,28 @@ void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
         if(answer == QMessageBox::Yes)
         {
             ui->listeProduits->setCurrentRow(ui->listeProduits->row(item));
+
+            // Étape 1 : on vérifie si le magasin du produit est encore utilisé par d'autres produits
+            ProduitItem prodToRemove = ((ProduitItem) ui->listeProduits->itemWidget(item));
+            int manufacturer = prodToRemove.getMagasin();
+            bool manufacturerIsUsedByAnotherProduct = false;
+            for(int i = 0; i < ui->listeProduits->count(); i++) {
+
+                if(i != ui->listeProduits->currentRow()) {
+
+                    QListWidgetItem *itemProd = ui->listeProduits->item(i);
+                    ProduitItem prod = (ProduitItem) ui->listeProduits->itemWidget(itemProd);
+                    if(prod.getMagasin() == manufacturer)
+                        manufacturerIsUsedByAnotherProduct = true;
+
+                }
+
+            }
+
+            // Si le magasin n'est plus utilisé, on le supprime
+            // TODO écrire le code correspondant
+
+            // Étae 2 : on suppprime le produit
             ui->listeProduits->removeItemWidget(item);
 
             delete item;

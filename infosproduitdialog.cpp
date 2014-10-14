@@ -13,15 +13,14 @@
 #include <QTransform>
 #include <QSettings>
 
+#include <iostream>
+
 InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QString nomProduit, QDate dateAchat, QDate dateFinGarantie, QPixmap image, int indexMagasin, bool enSAV, QHash<QString, QByteArray> facturePDF, QHash<QString, QByteArray> garantiePDF) :
     QDialog(mainWindow),
     ui(new Ui::InfosProduitDialog)
 {
     ui->setupUi(this);
     parentWidget = parent;
-
-    // On ajoute une ligne vide, correspondant à un magasin non renseigné. Il correspond à un indexMagasin de -1
-    ui->comboMagasin->addItem("");
 
     // Récupération de la liste des magasins enregistrés
     QSettings *settings = new QSettings("Deuchnord", "Hermes");
@@ -60,7 +59,7 @@ InfosProduitDialog::InfosProduitDialog(QWidget *parent, QWidget *mainWindow, QSt
         ui->checkGarantieAVie->setChecked(true);
     }
 
-    ui->comboMagasin->setCurrentIndex(indexMagasin+1);
+    ui->comboMagasin->setCurrentIndex(indexMagasin);
     ui->checkSAV->setChecked(enSAV);
     ui->image->setPixmap(image);
     this->image = image;
@@ -279,7 +278,72 @@ void InfosProduitDialog::on_buttonBox_accepted()
         getParentItem()->setDateFinGarantie(QDate(1970, 1, 1));
 
     getParentItem()->setImage(this->image);
-    getParentItem()->setMagasin(ui->comboMagasin->currentIndex()-1);
+
+    QSettings *settings = new QSettings("Deuchnord", "Hermes");
+    QFile fichierMagasins(settings->value("placeSave").toString()+"/deuchnord-hermes/manufacturers.xml");
+    bool manufacturerAllreadyExists = false;
+    QDomDocument dom;
+    QDomElement root, manufacturer;
+    QDomNode node;
+
+    if(fichierMagasins.open(QFile::ReadOnly)) {
+
+        QString contenuFichier = fichierMagasins.readAll();
+        fichierMagasins.close();
+
+        dom.setContent(contenuFichier);
+        root = dom.firstChildElement();
+        node = root.firstChild();
+
+        while(!node.isNull())
+        {
+            manufacturer = node.toElement();
+            if(manufacturer.tagName() == "manufacturer")
+                if(ui->comboMagasin->currentText() == manufacturer.firstChild().toText().data())
+                    manufacturerAllreadyExists = true;
+
+            node = node.nextSibling();
+        }
+    }
+
+    if(!manufacturerAllreadyExists) {
+
+        dom = QDomDocument("manufacturers");
+        root = dom.createElement("manufacturers");
+        dom.appendChild(root);
+
+        // Boucle d'enregistrement des éléments du combo
+        for(int i = 0; i < ui->comboMagasin->count(); i++) {
+
+            QDomElement domManufacturer = dom.createElement("manufacturer");
+            root.appendChild(domManufacturer);
+            QDomText textManufacturer = dom.createTextNode(ui->comboMagasin->itemText(i));
+            domManufacturer.appendChild(textManufacturer);
+
+        }
+
+        // Enregistrement du nouveau magasin
+        QDomElement domNewManufacturer = dom.createElement("manufacturer");
+        root.appendChild(domNewManufacturer);
+        QDomText textNewManufacturer = dom.createTextNode(ui->comboMagasin->currentText());
+        domNewManufacturer.appendChild(textNewManufacturer);
+
+        // Enregistrement du fichier XML
+        QFile fileManufacturers(settings->value("placeSave").toString()+"/deuchnord-hermes/manufacturers.xml");
+        if(fileManufacturers.open(QFile::WriteOnly)) {
+
+            fileManufacturers.write(dom.toString().toUtf8());
+            fileManufacturers.close();
+
+        }
+
+        getParentItem()->setMagasin(ui->comboMagasin->count());
+
+    }
+
+    else
+        getParentItem()->setMagasin(ui->comboMagasin->currentIndex());
+
     getParentItem()->setEnSAV(ui->checkSAV->isChecked());
     getParentItem()->setFactures(this->facturePDF);
     getParentItem()->setGaranties(this->garantiePDF);
