@@ -7,11 +7,12 @@ class ManufacturersManager
 {
 
 public:
-    explicit ManufacturersManager();
+    ManufacturersManager();
     void addManufacturer(QString manufacturer);
     QList<QString> getManufacturers();
     void deleteManufacturer(int manufacturerToDelete);
     void save();
+    ~ManufacturersManager();
 
 private:
     QList<QString> manufacturers;
