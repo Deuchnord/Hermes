@@ -43,7 +43,6 @@
     <addaction name="actionNouveauProduit"/>
     <addaction name="actionSupprimerProduit"/>
     <addaction name="separator"/>
-    <addaction name="actionGererMagasins"/>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
@@ -75,8 +74,6 @@
    </attribute>
    <addaction name="actionNouveauProduit"/>
    <addaction name="actionSupprimerProduit"/>
-   <addaction name="separator"/>
-   <addaction name="actionGererMagasins"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -97,11 +94,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="actionGererMagasins">
-   <property name="text">
-    <string>Gérer les magasins...</string>
    </property>
   </action>
   <action name="actionAide">

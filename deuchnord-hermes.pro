@@ -19,7 +19,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     produititem.cpp \
     infosproduitdialog.cpp \
-    gestionmagasinsdialog.cpp \
     aboutdialog.cpp \
     scannerdialog.cpp \
     settingsdialog.cpp \
@@ -28,7 +27,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     produititem.h \
     infosproduitdialog.h \
-    gestionmagasinsdialog.h \
     aboutdialog.h \
     scannerdialog.h \
     settingsdialog.h \
@@ -37,7 +35,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     produititem.ui \
     infosproduitdialog.ui \
-    gestionmagasinsdialog.ui \
     aboutdialog.ui \
     scannerdialog.ui \
     settingsdialog.ui

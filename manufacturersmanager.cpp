@@ -51,7 +51,7 @@ void ManufacturersManager::deleteManufacturer(int manufacturerToDelete) {
 
 }
 
-ManufacturersManager::save() {
+void ManufacturersManager::save() {
 
     QDomDocument dom("manufacturers");
     QDomElement rootElement = dom.createElement("manufacturers");
@@ -60,7 +60,7 @@ ManufacturersManager::save() {
     for(QString manufacturer : manufacturers) {
 
         QDomElement domManufacturer = dom.createElement("manufacturer");
-        root.appendChild(domManufacturer);
+        rootElement.appendChild(domManufacturer);
         QDomText textManufacturer = dom.createTextNode(manufacturer);
         domManufacturer.appendChild(textManufacturer);
 

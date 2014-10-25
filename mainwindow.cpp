@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "produititem.h"
-#include "gestionmagasinsdialog.h"
 #include "aboutdialog.h"
 #include "settingsdialog.h"
 #include "ui_mainwindow.h"
+#include "manufacturersmanager.h"
 
 #include <QSpacerItem>
 #include <QWidget>
@@ -168,16 +168,16 @@ void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
             ui->listeProduits->setCurrentRow(ui->listeProduits->row(item));
 
             // Étape 1 : on vérifie si le magasin du produit est encore utilisé par d'autres produits
-            ProduitItem prodToRemove = ((ProduitItem) ui->listeProduits->itemWidget(item));
-            int manufacturer = prodToRemove.getMagasin();
+            ProduitItem *prodToRemove = ((ProduitItem*) ui->listeProduits->itemWidget(item));
+            int manufacturer = prodToRemove->getMagasin();
             bool manufacturerIsUsedByAnotherProduct = false;
             for(int i = 0; i < ui->listeProduits->count(); i++) {
 
                 if(i != ui->listeProduits->currentRow()) {
 
                     QListWidgetItem *itemProd = ui->listeProduits->item(i);
-                    ProduitItem prod = (ProduitItem) ui->listeProduits->itemWidget(itemProd);
-                    if(prod.getMagasin() == manufacturer)
+                    ProduitItem *prod = (ProduitItem*) ui->listeProduits->itemWidget(itemProd);
+                    if(prod->getMagasin() == manufacturer)
                         manufacturerIsUsedByAnotherProduct = true;
 
                 }
@@ -185,7 +185,11 @@ void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
             }
 
             // Si le magasin n'est plus utilisé, on le supprime
-            // TODO écrire le code correspondant
+            if(!manufacturerIsUsedByAnotherProduct) {
+                ManufacturersManager mg;
+                mg.deleteManufacturer(manufacturer);
+                mg.save();
+            }
 
             // Étae 2 : on suppprime le produit
             ui->listeProduits->removeItemWidget(item);
@@ -197,28 +201,6 @@ void MainWindow::on_actionSupprimerProduit_triggered(bool dontAskConfirm)
 
             updateStatusMessage();
         }
-    }
-}
-
-void MainWindow::on_actionGererMagasins_triggered()
-{
-    GestionMagasinsDialog *dialog = new GestionMagasinsDialog(this);
-    dialog->setModal(true);
-    dialog->show();
-    connect(dialog, SIGNAL(magasinDeleted(int)), SLOT(magasinDeleted(int)));
-}
-
-void MainWindow::magasinDeleted(int indexMagasin)
-{
-    // Si un magasin a été supprimé, on change le magasin pour une valeur vide.
-
-    for(int i = 0; i < ui->listeProduits->count(); i++)
-    {
-        ProduitItem* item = (ProduitItem*) ui->listeProduits->itemWidget(ui->listeProduits->item(i));
-        if(item->getMagasin() == indexMagasin)
-            item->setMagasin(-1);
-        if(item->getMagasin() > indexMagasin)
-            item->setMagasin(item->getMagasin()-1);
     }
 }
 
