@@ -3,6 +3,8 @@
 #include "mainwindow.h"
 
 #include <QMessageBox>
+#include <QBuffer>
+#include <manufacturersmanager.h>
 
 QDataStream &operator <<(QDataStream &out, const ProduitInfo &prod)
 {
@@ -154,6 +156,48 @@ ProduitInfo ProduitItem::getProduitInfo()
     i.garanties = this->garanties;
 
     return i;
+}
+
+QJsonObject ProduitItem::getJSON()
+{
+    // Convert image to base64
+    QByteArray imageByteArray;
+    QBuffer buffer(&imageByteArray);
+    buffer.open(QIODevice::WriteOnly);
+    this->image.toImage().save(&buffer, "JPEG");
+    QString imageBase64 = imageByteArray.toBase64();
+
+    // Fetch the shop's name
+    ManufacturersManager manufacturersManager;
+    QList<QString> manufacturers = manufacturersManager.getManufacturers();
+    QString shopName = manufacturers[this->indexMagasin];
+
+    // Attached documents
+    QJsonObject jsonAttachedDocuments;
+    for(int i = 0; i < factures.keys().length(); i++)
+    {
+        QString key = factures.keys()[i];
+        QByteArray facture = factures[key];
+        jsonAttachedDocuments["fac-" + key] = (QString) facture.toBase64();
+    }
+
+    for(int i = 0; i < garanties.keys().length(); i++)
+    {
+        QString key = garanties.keys()[i];
+        QByteArray garantie = garanties[key];
+        jsonAttachedDocuments["warr-" + key] = (QString) garantie.toBase64();
+    }
+
+    QJsonObject jsonObject;
+    jsonObject["name"] = this->nomProduit;
+    jsonObject["boughtOn"] = (int) ((QDateTime) this->dateAchat).toTime_t();
+    jsonObject["warrantyEnd"] = (int) ((QDateTime) this->dateFinGarantie).toTime_t();
+    jsonObject["image"] = imageBase64;
+    jsonObject["shop"] = shopName;
+    jsonObject["returnedToManufacturer"] = this->enSAV;
+    jsonObject["attachedDocuments"] = jsonAttachedDocuments;
+
+    return jsonObject;
 }
 
 ProduitItem::~ProduitItem()

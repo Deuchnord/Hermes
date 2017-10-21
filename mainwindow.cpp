@@ -24,6 +24,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QPushButton>
+#include <QJsonArray>
+#include <QJsonDocument>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     saveOnQuit = true;
 
-    version = "0.6";
+    version = "0.7";
 
     searchBox = new QLineEdit(this);
     searchBox->addAction(QIcon(":/icons/icon-search.png"), QLineEdit::LeadingPosition);
@@ -60,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
         settings->setValue("placeSave", QDir::homePath());
         placeSave = settings->value("placeSave").toString();
     }
+    settings->setValue("lastExecutedVersion", version);
 
     QFile saveFile(placeSave + "/deuchnord-hermes/products.hrms");
     QDataStream content(&saveFile);
@@ -83,22 +86,34 @@ MainWindow::MainWindow(QWidget *parent) :
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(dlVersionFinished(QNetworkReply*)));
 
+    manager->get(QNetworkRequest(QUrl("https://www.deuchnord.fr/updates/hermes")));
+}
+
+void MainWindow::dlVersionFinished(QNetworkReply *reply)
+{
 #ifdef Q_OS_LINUX
     QString os = "linux";
 #endif
 #ifdef Q_OS_WIN32
     QString os = "windows";
 #endif
+#ifdef Q_OS_DARWIN
+    QString os = "darwin";
+#endif
 
-    manager->get(QNetworkRequest(QUrl("http://hermes.deuchnord.tk/version.php?os="+os)));
-}
+    if(reply->error() != QNetworkReply::NoError)
+        return;
 
-void MainWindow::dlVersionFinished(QNetworkReply *reply)
-{
-    QString versionAvailable = reply->readAll();
-    if(versionAvailable != "" && version != versionAvailable)
+    QString versionsAvailable = reply->readAll();
+    QJsonDocument versionJson = QJsonDocument::fromJson(versionsAvailable.toUtf8());
+    QJsonObject lastVersions = versionJson.object();
+
+    if(lastVersions.contains("error"))
+        return;
+
+    if(version != lastVersions[os].toString())
     {
-        ui->statusBar->showMessage(tr("Une nouvelle version (%1) est disponible !", "%1 represents the number of the new version (for instance: 0.4.1)").arg(versionAvailable));
+        ui->statusBar->showMessage(tr("Une nouvelle version (%1) est disponible !", "%1 represents the number of the new version (for instance: 0.4.1)").arg(lastVersions[os].toString()));
         QPushButton* btnUpdate = new QPushButton(tr("Télécharger la nouvelle version"));
         connect(btnUpdate, SIGNAL(clicked()), this, SLOT(dlNewVersionBtnClicked()));
         ui->statusBar->addPermanentWidget(btnUpdate);
@@ -107,7 +122,7 @@ void MainWindow::dlVersionFinished(QNetworkReply *reply)
 
 void MainWindow::dlNewVersionBtnClicked()
 {
-    QDesktopServices::openUrl(QUrl("http://hermes.deuchnord.tk"));
+    QDesktopServices::openUrl(QUrl("https://www.deuchnord.fr/projets/hermes"));
 }
 
 void MainWindow::searchProduit(QString search)
@@ -240,12 +255,12 @@ void MainWindow::on_actionAPropos_triggered()
 
 void MainWindow::on_actionReportBug_triggered()
 {
-    QDesktopServices::openUrl(QUrl("https://sourceforge.net/p/deuchnord-hermes/bugs/"));
+    QDesktopServices::openUrl(QUrl("https://tickets.deuchnord.fr/index.php?project=2&do=index&switch=1"));
 }
 
 void MainWindow::on_actionAide_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://hermes.deuchnord.tk/help/"));
+    QDesktopServices::openUrl(QUrl("https://doc.deuchnord.fr/hermes/start"));
 }
 
 Ui::MainWindow *MainWindow::getUI()
@@ -272,7 +287,25 @@ MainWindow::~MainWindow()
         QDir dir(place+"/deuchnord-hermes");
         if(!dir.exists())
             dir.mkdir(place+"/deuchnord-hermes");
+        QDir v1Dir(place+"/deuchnord-hermes/json");
+        if(!v1Dir.exists())
+            dir.mkdir(place+"/deuchnord-hermes/json");
 
+        // Save in JSON format for version 1.0 (one file per product to avoid huge file issue)
+        for(int i = 0; i < ui->listeProduits->count(); i++)
+        {
+            ProduitItem* item = (ProduitItem*) ui->listeProduits->itemWidget(ui->listeProduits->item(i));
+            QJsonDocument jsonDocument(item->getJSON());
+
+            QFile jsonFile(place + "/deuchnord-hermes/json/" + QString::number(i) + ".json");
+            if(jsonFile.open((QFile::WriteOnly)))
+            {
+                jsonFile.write(jsonDocument.toJson());
+                jsonFile.close();
+            }
+        }
+
+        // Legacy 0.x file
         QFile saveFile(place+"/deuchnord-hermes/products.hrms");
         QDataStream content(&saveFile);
         content.setVersion(QDataStream::Qt_5_0);

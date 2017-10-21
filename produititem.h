@@ -7,6 +7,7 @@
 #include <QByteArray>
 #include <QHash>
 #include <QDataStream>
+#include <QJsonObject>
 
 #include "infosproduitdialog.h"
 
@@ -38,6 +39,9 @@ public:
 
     // Pour la sérialisation
     ProduitInfo getProduitInfo();
+
+    // Conversion en JSON
+    QJsonObject getJSON();
 
     // Getters
     QPixmap getImage();
