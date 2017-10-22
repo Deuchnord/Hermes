@@ -13,6 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = deuchnord-hermes
 TEMPLATE = app
+ICON = hermes.icns
 
 
 SOURCES += main.cpp\
